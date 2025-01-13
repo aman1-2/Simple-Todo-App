@@ -12,6 +12,16 @@ function addTodo(todoData) {
     let finishedButton = document.createElement("button");
     let hr = document.createElement("hr");
 
+    //Adding classes in our div
+    rowDiv.classList.add("row");
+    todoItem.classList.add("todo-item", "d-flex", "justify-content-between", "align-items-center");
+    todoNumber.classList.add("todo-no");
+    todoDetail.classList.add("todo-detail");
+    todoStatus.classList.add("todo-status");
+    todoAction.classList.add("todo-actions", "d-flex", "justify-content-start", "gap-2");
+    deleteButton.classList.add("btn", "btn-danger");
+    finishedButton.classList.add("btn", "btn-success");
+
     todoNumber.textContent = "1";
     todoDetail.textContent = todoData; //This text content will get that value which we will pass by pressing the save of the input.
     todoStatus.textContent = "In Progress";
@@ -29,6 +39,7 @@ function addTodo(todoData) {
     todoItem.appendChild(todoAction);
 
     rowDiv.appendChild(todoItem);
+    rowDiv.appendChild(hr);
 
     //Now appending our todo in the todo-data div.
     todoDataSection[0].appendChild(rowDiv);
