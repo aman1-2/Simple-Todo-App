@@ -31,7 +31,7 @@ function addTodo(todoData) {
     rowDiv.appendChild(todoItem);
 
     //Now appending our todo in the todo-data div.
-    todoDataSection.appendChild(rowDiv);
+    todoDataSection[0].appendChild(rowDiv);
 
 }
 
