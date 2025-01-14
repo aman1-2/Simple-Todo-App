@@ -6,6 +6,12 @@ todos.push({text: "Need to complete the DSA Series", status: "In Progress", fini
 let todoDataList = document.getElementsByClassName("todo-data-list"); //This is extract the html element where we need to at the end append our todo child.
 let saveBtn = document.getElementById("save-btn");
 let todoInputBar = document.getElementById("todo-input-bar");
+let getPendingTodoButton = document.getElementById("get-todo");
+
+getPendingTodoButton.addEventListener("click", () => {
+    todos = todos.filter((todo) => todo.status != "Finished");
+    reRenderTodos();
+});
 
 //Adding a listener to tell if the anything is written in the input bar then enable the save button.
 todoInputBar.addEventListener("keyup", function toggleSaveBtn() {
@@ -52,6 +58,7 @@ function saveEditedTodo (event) { //We will render this function when we trigger
         detailDiv.style.display = "block";
         input.value = '';
         input.type = "hidden";
+        todos[idxTodoEdit].text = detailDiv.textContent;
     }
 }
 
@@ -109,7 +116,7 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     let hiddenInput = document.createElement("input");
     let hr = document.createElement("hr");
 
-    //Adding classes in our div
+    //Adding classes
     rowDiv.classList.add("row");
     todoItem.classList.add("todo-item", "d-flex", "justify-content-between", "align-items-center");
     todoNumber.classList.add("todo-no");
@@ -121,17 +128,21 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     editButton.classList.add("btn", "btn-warning","edit-todo");
     hiddenInput.classList.add("form-control", "todo-detail")
 
+    //Adding attributes
     finishedButton.setAttribute("todo-idx", todoCount-1); //Added a attribute in the finished element as well.
     deleteButton.setAttribute("todo-idx", todoCount-1); //Before deleteing the todo set the count value to that index position. Array is 0-based that's why count-1.
-    deleteButton.addEventListener("click", deleteTodo); //Added a click event Listener on our deletebutton which is calling deleteTodo function.
-    finishedButton.addEventListener("click", finishedTodo);
     editButton.setAttribute("todo-idx", todoCount-1);
-    editButton.addEventListener("click", editTodo);
-    hiddenInput.type = "hidden";
     todoDetail.setAttribute("todo-idx", todoCount-1);
     hiddenInput.setAttribute("todo-idx", todoCount-1);
+    hiddenInput.type = "hidden";
+
+    //Adding Listener
+    deleteButton.addEventListener("click", deleteTodo); //Added a click event Listener on our deletebutton which is calling deleteTodo function.
+    finishedButton.addEventListener("click", finishedTodo);
+    editButton.addEventListener("click", editTodo);
     hiddenInput.addEventListener("keypress", saveEditedTodo);
 
+    //Giving values
     todoNumber.textContent = `${todoCount}.`;
     todoDetail.textContent = todoData.text; //This text content will get that value which we will be typed in the input bar.
     todoStatus.textContent = todoData.status; //This status will get the value stored in the todos array's particulat todo object.
