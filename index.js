@@ -1,7 +1,7 @@
 console.log("Welcome to the Todo App.");
 
 let todos = [];
-todos.push("Need to complete the DSA Series");
+todos.push({text: "Need to complete the DSA Series", status: "In Progress"});
 
 let todoDataList = document.getElementsByClassName("todo-data-list"); //This is extract the html element where we need to at the end append our todo child.
 let saveBtn = document.getElementById("save-btn");
@@ -22,11 +22,40 @@ todoInputBar.addEventListener("keyup", function toggleSaveBtn() {
 saveBtn.addEventListener("click", function getTextAndAddTodo() {
     let todoText = todoInputBar.value; //With the value property we can access the text present inside our input bar.
     if(todoText.length == 0)    return; //If there is no todo passed then we don't need to do anything.
-    todos.push(todoText); //Whenever we need to add a todo then we will first of all add that text in an array.
-    addTodo(todoText, todos.length); //If there is some value available in the todo bar then we need to call the addTodo function with the text in it.
+    let todo = {text: todoText, status: "In Progress", finishedButtonText: "Finished"}; //A todo object created.
+    todos.push(todo); //Whenever we need to add a todo then we will first of all add that text in an array.
+    addTodo(todo, todos.length); //If there is some value available in the todo bar then we need to call the addTodo function with the text in it.
     todoInputBar.value = ""; //Once we have added the todo by clicking on the save button the input bar should go blank once again.
     saveBtn.classList.add("disabled"); //After we have made a successful saving of todo after that we wjust need to add a disable property again.
 });
+
+function reRenderTodos() { //Using this thing again and again therefore created a function for this.
+    todoDataList[0].innerHTML = ''; //Firstly removed each element.
+    todos.forEach((element, idx) => { //Then with the loop re-rendered.
+        addTodo(element, idx+1);
+    });
+}
+
+function finishedTodo(event) {
+    console.log("Changing the status of the todo to finished.")
+    let finishedButtonPressed = event.target;
+    let idxStatusToUpdate = Number(finishedButtonPressed.getAttribute("todo-idx"));
+    //Implemented Toggle like feature
+    if(todos[idxStatusToUpdate].status == "Finished") {
+        todos[idxStatusToUpdate].status = "In Progress";
+        todos[idxStatusToUpdate].finishedButtonText = "Finished";
+    } else {
+        todos[idxStatusToUpdate].status = "Finished";
+        todos[idxStatusToUpdate].finishedButtonText = "Undo";
+    }
+    //Sorting the todos. Need to pass the custom comparator because we have objects.
+    todos.sort((obj1, obj2)=> {
+        if(obj1.status == "Finished")  return 1; //1 places obj2 before obj1
+        return -1; //-1 places obj1 before obj2;
+    });
+    //Once the status is updated then we need to re-render our todo-list once again.
+    reRenderTodos();
+}
 
 function deleteTodo(event) {
     console.log("Delete todo function called");
@@ -37,11 +66,8 @@ function deleteTodo(event) {
     //Step 3: Removing that todo element from the array.
     todos.splice(idxToRemove, 1);
     //Step 4: Removing the complete todo-data element with all its child value actually erasing all the child values of the todo-data element.
-    todoDataList[0].innerHTML = '';
     //Step 5: Running the loop on the array to add the todo's again like re-rendering is happening.
-    todos.forEach((element, idx) => {
-        addTodo(element, idx+1);
-    });
+    reRenderTodos();
 }
 
 function addTodo(todoData, todoCount) { //Passed todo data and number
@@ -65,14 +91,16 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     deleteButton.classList.add("btn", "btn-danger", "delete-todo");
     finishedButton.classList.add("btn", "btn-success", "finished-todo");
 
+    finishedButton.setAttribute("todo-idx", todoCount-1); //Added a attribute in the finished element as well.
     deleteButton.setAttribute("todo-idx", todoCount-1); //Before deleteing the todo set the count value to that index position. Array is 0-based that's why count-1.
     deleteButton.addEventListener("click", deleteTodo); //Added a click event Listener on our deletebutton which is calling deleteTodo function.
+    finishedButton.addEventListener("click", finishedTodo);
 
     todoNumber.textContent = `${todoCount}.`;
-    todoDetail.textContent = todoData; //This text content will get that value which we will pass by pressing the save of the input.
-    todoStatus.textContent = "In Progress";
+    todoDetail.textContent = todoData.text; //This text content will get that value which we will be typed in the input bar.
+    todoStatus.textContent = todoData.status; //This status will get the value stored in the todos array's particulat todo object.
     deleteButton.textContent = "Delete";
-    finishedButton.textContent = "Finished";
+    finishedButton.textContent = todoData.finishedButtonText;
 
     //Now inside the todo-action div we will append our delete and finished button
     todoAction.appendChild(deleteButton);
@@ -92,6 +120,10 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
 
 }
 
+let deleteBtn = document.getElementById("delete-todo");
+deleteBtn.onclick = deleteTodo;
+let finishedBtn = document.getElementById("finished-todo");
+finishedBtn.onclick = finishedTodo;
 
 
 
