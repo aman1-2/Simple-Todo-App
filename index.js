@@ -1,4 +1,6 @@
-console.log("Welcome to the Todo App.")
+console.log("Welcome to the Todo App.");
+
+let todos = [];
 
 let todoDataSection = document.getElementsByClassName("todo-data"); //This is extract the html element where we need to at the end append our todo child.
 let saveBtn = document.getElementById("save-btn");
@@ -19,11 +21,13 @@ todoInputBar.addEventListener("keyup", function toggleSaveBtn() {
 saveBtn.addEventListener("click", function getTextAndAddTodo() {
     let todoText = todoInputBar.value; //With the value property we can access the text present inside our input bar.
     if(todoText.length == 0)    return; //If there is no todo passed then we don't need to do anything.
-    addTodo(todoText); //If there is some value available in the todo bar then we need to call the addTodo function with the text in it.
+    todos.push(todoText); //Whenever we need to add a todo then we will first of all add that text in an array.
+    addTodo(todoText, todos.length + 1); //If there is some value available in the todo bar then we need to call the addTodo function with the text in it.
     todoInputBar.value = ""; //Once we have added the todo by clicking on the save button the input bar should go blank once again.
+    saveBtn.classList.add("disabled");
 });
 
-function addTodo(todoData) {
+function addTodo(todoData, todoCount) { //Passed todo data and number
     let rowDiv = document.createElement("div");
     let todoItem = document.createElement("div");
     let todoNumber = document.createElement("div");
@@ -44,7 +48,7 @@ function addTodo(todoData) {
     deleteButton.classList.add("btn", "btn-danger");
     finishedButton.classList.add("btn", "btn-success");
 
-    todoNumber.textContent = "1";
+    todoNumber.textContent = `${todoCount}.`;
     todoDetail.textContent = todoData; //This text content will get that value which we will pass by pressing the save of the input.
     todoStatus.textContent = "In Progress";
     deleteButton.textContent = "Delete";
