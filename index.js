@@ -79,6 +79,7 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     let todoAction = document.createElement("div");
     let deleteButton = document.createElement("button");
     let finishedButton = document.createElement("button");
+    let editButton = document.createElement("button");
     let hr = document.createElement("hr");
 
     //Adding classes in our div
@@ -90,6 +91,7 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     todoAction.classList.add("todo-actions", "d-flex", "justify-content-start", "gap-2");
     deleteButton.classList.add("btn", "btn-danger", "delete-todo");
     finishedButton.classList.add("btn", "btn-success", "finished-todo");
+    editButton.classList.add("btn", "btn-warning","edit-todo");
 
     finishedButton.setAttribute("todo-idx", todoCount-1); //Added a attribute in the finished element as well.
     deleteButton.setAttribute("todo-idx", todoCount-1); //Before deleteing the todo set the count value to that index position. Array is 0-based that's why count-1.
@@ -101,10 +103,12 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     todoStatus.textContent = todoData.status; //This status will get the value stored in the todos array's particulat todo object.
     deleteButton.textContent = "Delete";
     finishedButton.textContent = todoData.finishedButtonText;
+    editButton.textContent = "Edit";
 
     //Now inside the todo-action div we will append our delete and finished button
     todoAction.appendChild(deleteButton);
     todoAction.appendChild(finishedButton);
+    todoAction.appendChild(editButton);
 
     //Just appending the elements
     todoItem.appendChild(todoNumber);
