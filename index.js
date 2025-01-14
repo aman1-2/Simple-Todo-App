@@ -1,7 +1,7 @@
 console.log("Welcome to the Todo App.");
 
 let todos = [];
-todos.push({text: "Need to complete the DSA Series", status: "In Progress"});
+todos.push({text: "Need to complete the DSA Series", status: "In Progress", finishedButtonText: "Finished"});
 
 let todoDataList = document.getElementsByClassName("todo-data-list"); //This is extract the html element where we need to at the end append our todo child.
 let saveBtn = document.getElementById("save-btn");
@@ -28,6 +28,32 @@ saveBtn.addEventListener("click", function getTextAndAddTodo() {
     todoInputBar.value = ""; //Once we have added the todo by clicking on the save button the input bar should go blank once again.
     saveBtn.classList.add("disabled"); //After we have made a successful saving of todo after that we wjust need to add a disable property again.
 });
+
+function editTodo (event) {
+    //Extracting the todo which we want to change.
+    let editButtonPressed = event.target;
+    let idxOfTodoToEdit = Number(editButtonPressed.getAttribute("todo-idx"));
+    //With the help of custom query we selected out detail and input div and changed there propertied
+    let detailDiv = document.querySelector(`div[todo-idx="${idxOfTodoToEdit}"]`);
+    let input = document.querySelector(`input[todo-idx="${idxOfTodoToEdit}"]`);
+    detailDiv.style.display = "none";
+    input.type = "text";
+    //Now saving the detailDiv text content as the value of our input bar so that editing should being form the previous input value only.
+    input.value = detailDiv.textContent; //Prefilling the value.
+}
+
+function saveEditedTodo (event) { //We will render this function when we trigger the event inside the hidden input on the keyPress
+    let input = event.target;
+    let idxTodoEdit = Number(input.getAttribute("todo-idx"));
+    let detailDiv = document.querySelector(`div[todo-idx="${idxTodoEdit}"]`);
+
+    if(event.keyCode == 13) { //On enter the key press code is 13
+        detailDiv.textContent = input.value;
+        detailDiv.style.display = "block";
+        input.value = '';
+        input.type = "hidden";
+    }
+}
 
 function reRenderTodos() { //Using this thing again and again therefore created a function for this.
     todoDataList[0].innerHTML = ''; //Firstly removed each element.
@@ -80,6 +106,7 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     let deleteButton = document.createElement("button");
     let finishedButton = document.createElement("button");
     let editButton = document.createElement("button");
+    let hiddenInput = document.createElement("input");
     let hr = document.createElement("hr");
 
     //Adding classes in our div
@@ -92,11 +119,18 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     deleteButton.classList.add("btn", "btn-danger", "delete-todo");
     finishedButton.classList.add("btn", "btn-success", "finished-todo");
     editButton.classList.add("btn", "btn-warning","edit-todo");
+    hiddenInput.classList.add("form-control", "todo-detail")
 
     finishedButton.setAttribute("todo-idx", todoCount-1); //Added a attribute in the finished element as well.
     deleteButton.setAttribute("todo-idx", todoCount-1); //Before deleteing the todo set the count value to that index position. Array is 0-based that's why count-1.
     deleteButton.addEventListener("click", deleteTodo); //Added a click event Listener on our deletebutton which is calling deleteTodo function.
     finishedButton.addEventListener("click", finishedTodo);
+    editButton.setAttribute("todo-idx", todoCount-1);
+    editButton.addEventListener("click", editTodo);
+    hiddenInput.type = "hidden";
+    todoDetail.setAttribute("todo-idx", todoCount-1);
+    hiddenInput.setAttribute("todo-idx", todoCount-1);
+    hiddenInput.addEventListener("keypress", saveEditedTodo);
 
     todoNumber.textContent = `${todoCount}.`;
     todoDetail.textContent = todoData.text; //This text content will get that value which we will be typed in the input bar.
@@ -113,6 +147,7 @@ function addTodo(todoData, todoCount) { //Passed todo data and number
     //Just appending the elements
     todoItem.appendChild(todoNumber);
     todoItem.appendChild(todoDetail);
+    todoItem.appendChild(hiddenInput);
     todoItem.appendChild(todoStatus);
     todoItem.appendChild(todoAction);
 
@@ -128,6 +163,10 @@ let deleteBtn = document.getElementById("delete-todo");
 deleteBtn.onclick = deleteTodo;
 let finishedBtn = document.getElementById("finished-todo");
 finishedBtn.onclick = finishedTodo;
+let editBtn = document.getElementById("edit-todo");
+editBtn.onclick = editTodo;
+let hiddenInputBar = document.getElementById("hidden-bar");
+hiddenInputBar.addEventListener("keypress", saveEditedTodo);
 
 
 
